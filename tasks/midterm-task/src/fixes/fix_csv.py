@@ -35,6 +35,12 @@ def main():
             delimiter=delimiter,
             quotechar=quotechar,
         )
+        utils.save_rows(
+            rows=rows,
+            destination_path=str(destination_path)[:-4] + "-fixed.csv",
+            delimiter=",",
+            quotechar=quotechar,
+        )
 
 
 if __name__ == "__main__":
