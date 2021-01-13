@@ -7,3 +7,5 @@
 # Praktični zadatci
 
 - [Međuispitni zadatak](./tasks/midterm-task)
+- [Završnoispitni zadatak](./tasks/final-task)
+- [Projekt](./project)
