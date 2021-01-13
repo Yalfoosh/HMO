@@ -210,7 +210,7 @@ class Customer:
 
     def __str__(self):
         return (
-            f"Customer {self.number:04d} @ ({self.x}, {self.y}): ready at "
+            f"Customer {self.number} @ ({self.x}, {self.y}): ready at "
             f"{self.ready_time}, due at {self.due_time}, requires {self.service_time}, "
             f"serviced at {self.serviced_at}"
         )
