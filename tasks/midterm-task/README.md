@@ -2,7 +2,7 @@
 
 ## Priprema
 
-Pozicionirajte se u direktorij u kojem se nalazi ova datoteka (HMO/tasks/midterm-tasks). U daljnjem tekstu pretpostavlja se korištenje **Conde**, a okruženje se zove `this_env`. Pokenite naedbu `conda activate this_env`. Pokrenite naredbu `pip install -r requirements.txt`.
+Pozicionirajte se u direktorij u kojem se nalazi ova datoteka (HMO/tasks/midterm-task). U daljnjem tekstu pretpostavlja se korištenje **Conde**, a okruženje se zove `this_env`. Pokenite naredbu `conda activate this_env`. Pokrenite naredbu `pip install -r requirements.txt`.
 
 ## Pokretanje
 
