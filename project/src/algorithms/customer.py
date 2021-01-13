@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Dict, Iterable, List, Set, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
 
@@ -7,21 +7,25 @@ import numpy as np
 class Customer:
     @staticmethod
     def _check_init_args(
-        customer_number: int,
+        number: int,
         x: int,
         y: int,
         demand: int,
         ready_time: int,
         due_time: int,
         service_time: int,
-    ) -> Tuple[int, int, int, int, int, int, int]:
+        serviced_at: Optional[int],
+    ) -> Tuple[int, int, int, int, int, int, int, int]:
+        if serviced_at is None:
+            serviced_at = 0
+
         # region Type Checking
         try:
-            customer_number = int(customer_number)
+            number = int(number)
         except TypeError:
             raise TypeError(
-                "Expected argument customer_number to be an int or castable to one, "
-                f"instead it is {type(customer_number)}."
+                "Expected argument number to be an int or castable to one, "
+                f"instead it is {type(number)}."
             )
 
         try:
@@ -72,6 +76,12 @@ class Customer:
                 f"instead it is {type(service_time)}."
             )
 
+        if not isinstance(serviced_at, int):
+            raise TypeError(
+                "Expected argument serviced_at to be an int, instead it is "
+                f"{type(serviced_at)}."
+            )
+
         # endregion
 
         # region Logic Checking
@@ -85,48 +95,52 @@ class Customer:
 
         # endregion
 
-        return customer_number, x, y, demand, ready_time, due_time, service_time
+        return number, x, y, demand, ready_time, due_time, service_time, serviced_at
 
     def __init__(
         self,
-        customer_number: int,
+        number: int,
         x: int,
         y: int,
         demand: int,
         ready_time: int,
         due_time: int,
         service_time: int,
+        serviced_at: Optional[int] = None,
     ):
         (
-            customer_number,
+            number,
             x,
             y,
             demand,
             ready_time,
             due_time,
             service_time,
+            serviced_at,
         ) = self._check_init_args(
-            customer_number=customer_number,
+            number=number,
             x=x,
             y=y,
             demand=demand,
             ready_time=ready_time,
             due_time=due_time,
             service_time=service_time,
+            serviced_at=serviced_at,
         )
 
-        self._customer_number = customer_number
+        self._number = number
         self._x = x
         self._y = y
         self._demand = demand
         self._ready_time = ready_time
         self._due_time = due_time
         self._service_time = service_time
+        self._serviced_at = serviced_at
 
     # region Properties
     @property
-    def customer_number(self) -> int:
-        return self._customer_number
+    def number(self) -> int:
+        return self._number
 
     @property
     def x(self) -> int:
@@ -160,6 +174,19 @@ class Customer:
     def service_time(self):
         return self._service_time
 
+    @property
+    def serviced_at(self) -> int:
+        return self._serviced_at
+
+    @serviced_at.setter
+    def serviced_at(self, value: int):
+        if not isinstance(value, int):
+            raise TypeError(
+                f"Expected argument value to be an int, instead it is {type(value)}."
+            )
+
+        self._serviced_at = value
+
     # endregion
 
     def distance(self, other: "Customer") -> float:
@@ -167,32 +194,37 @@ class Customer:
 
     def as_tuple(self):
         return (
-            self.customer_number,
+            self.number,
             self.x,
             self.y,
             self.demand,
             self.ready_time,
             self.due_time,
             self.service_time,
+            self.serviced_at,
         )
 
+    # region Dunder Methods
     def __repr__(self):
         return f'({",".join(self.as_tuple())})'
 
     def __str__(self):
         return (
-            f"Customer {self.customer_number:04d} @ ({self.x}, {self.y}): ready at "
-            f"{self.ready_time}, due at {self.due_time}, requires {self.service_time}"
+            f"Customer {self.number:04d} @ ({self.x}, {self.y}): ready at "
+            f"{self.ready_time}, due at {self.due_time}, requires {self.service_time}, "
+            f"serviced at {self.serviced_at}"
         )
 
     def __eq__(self, other: "Customer"):
         if other is None or not isinstance(other, Customer):
             return False
 
-        return self.customer_number == other.customer_number
+        return self.number == other.number
 
     def __hash__(self):
-        return hash(self.as_tuple())
+        return hash(self.number)
+
+    # endregion
 
 
 class CustomerGraph:
@@ -299,8 +331,11 @@ class CustomerGraph:
             customer=customer, to_ignore=to_ignore
         )[0]
 
+    # region Dunder Methods
     def __str__(self):
         to_return = "A CustomerGraph containing:\n\t"
         to_return += "\n\t".join([str(x) for x in self._customers])
 
         return to_return
+
+    # endregion
