@@ -18,7 +18,7 @@ DUMP_PATH_4="data/dumps/HMO_2020-21_project_dump_instance-4.json"
 DUMP_PATH_5="data/dumps/HMO_2020-21_project_dump_instance-5.json"
 DUMP_PATH_6="data/dumps/HMO_2020-21_project_dump_instance-6.json"
 
-MAX_RUNTIME=(1 5 60)
+MAX_RUNTIME=(1 5 25)
 
 
 ##################################################################

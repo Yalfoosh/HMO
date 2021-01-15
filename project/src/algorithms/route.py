@@ -3,7 +3,7 @@ from typing import Callable, Iterable, List, Optional
 
 import numpy as np
 
-from customer import Customer
+from .customer import Customer
 
 
 class Route:
@@ -14,10 +14,11 @@ class Route:
         if previous is None:
             current.serviced_at = 0
         else:
-            current.serviced_at = (
+            current.serviced_at = max(
+                current.ready_time,
                 previous.serviced_at
                 + previous.service_time
-                + int(np.ceil(previous.distance(current)) + 0.1)
+                + int(np.ceil(previous.distance(current)) + 0.1),
             )
 
         return current
@@ -79,12 +80,24 @@ class Route:
 
     @property
     def cost(self):
-        return self._customers[-1].serviced_at + self._customers[-1].service_time
+        return sum(x.demand for x in self._customers)
+
+    @property
+    def distance(self):
+        if len(self._customers) < 2:
+            return 0.0
+
+        return sum(
+            customer.distance(self._customers[i - 1])
+            for i, customer in enumerate(self._customers[1:])
+        )
 
     # endregion
 
     def add_stop(self, customer: Customer):
-        self._customers.append(self.function(customer, self._customers[-1]))
+        self._customers.append(
+            self.function(customer, self._customers[-1] if len(self) != 0 else None)
+        )
 
     def insert_stop(self, customer: Customer, index: int):
         if index > len(self):
@@ -116,6 +129,19 @@ class Route:
 
         for i, customer in enumerate(self._customers[index:], index):
             self._customers[i] = self.function(customer, self._customers[i - 1])
+
+    @staticmethod
+    def output_result(routes: Iterable["Route"]) -> str:
+        routes = list(routes)
+
+        to_return = f"{len(routes)}\n"
+        to_return += "\n".join(f"{i}: {route}" for i, route in enumerate(routes, 1))
+
+        route_distance = sum(route.distance for route in routes)
+
+        to_return += f"\n{route_distance}"
+
+        return to_return
 
     # region Dunder Methods
     def __repr__(self):

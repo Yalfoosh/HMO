@@ -5,8 +5,8 @@
 ##################################################################
 
 INSTANCE_PATH="data/original/HMO_2020-21_project_instance-1.txt"
-DUMP_PATH="data/dumps"
-MAX_RUNTIME=(1 5 60)
+DUMP_PATH="data/dumps/HMO_2020-21_project_dump_instance-1.json"
+MAX_RUNTIME=(1 5 25)
 
 
 ##################################################################

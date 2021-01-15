@@ -40,11 +40,11 @@ def get_main_parser():
         "--max_runtime",
         type=int,
         nargs="+",
-        default=(1, 5, 60),
+        default=(1, 5, 25),
         help=(
             "A list of ints representing the maximum number of minutes the algorithm "
             "will run. Duplicates will be removed. To make the algorithm run "
-            "indefinitely, pass a large number. Default: (1, 5, 60)"
+            "indefinitely, pass a large number. Default: (1, 5, 25)"
         ),
     )
 

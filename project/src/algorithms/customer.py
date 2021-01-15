@@ -84,17 +84,6 @@ class Customer:
 
         # endregion
 
-        # region Logic Checking
-        if ready_time + service_time > due_time:
-            raise RuntimeError(
-                "Expected argument due_time to be greater or equal to ready_time + "
-                f"service_time ({ready_time + service_time}), instead it is "
-                f"{due_time}. As a consequence, this node will make the problem not "
-                "solvable."
-            )
-
-        # endregion
-
         return number, x, y, demand, ready_time, due_time, service_time, serviced_at
 
     def __init__(
@@ -206,13 +195,13 @@ class Customer:
 
     # region Dunder Methods
     def __repr__(self):
-        return f'({",".join(self.as_tuple())})'
+        return f'({",".join([str(x) for x in self.as_tuple()])})'
 
     def __str__(self):
         return (
-            f"Customer {self.number} @ ({self.x}, {self.y}): ready at "
-            f"{self.ready_time}, due at {self.due_time}, requires {self.service_time}, "
-            f"serviced at {self.serviced_at}"
+            f"Customer {self.number} @ ({self.x}, {self.y}) worth {self.demand}: ready "
+            f"at {self.ready_time}, due at {self.due_time}, requires "
+            f"{self.service_time}, serviced at {self.serviced_at}"
         )
 
     def __eq__(self, other: "Customer"):
@@ -322,12 +311,54 @@ class CustomerGraph:
                     min_neighbour = copy.deepcopy(other)
                     min_distance = distance
 
+        if min_neighbour in to_ignore:
+            return None, None
+
         return min_neighbour, min_distance
 
     def get_closest_neighbour(
         self, customer: Customer, to_ignore: Iterable[Customer] = tuple()
     ):
         return self.get_closest_neighbour_with_distance(
+            customer=customer, to_ignore=to_ignore
+        )[0]
+
+    def get_soonest_neighbour_with_time(
+        self, customer: Customer, to_ignore: Iterable[Customer] = tuple()
+    ):
+        key = customer.coords
+
+        if key == self._customers[0].coords:
+            starting_index = 2
+        else:
+            starting_index = 1
+
+        min_neighbour = copy.deepcopy(self._customers[starting_index - 1])
+        min_time = max(
+            min_neighbour.ready_time,
+            customer.serviced_at + self.get_distance(customer, min_neighbour),
+        )
+
+        for other in self._customers[starting_index:]:
+            if key != other.coords and other not in to_ignore:
+                time = max(
+                    min_neighbour.ready_time,
+                    customer.serviced_at + self.get_distance(customer, min_neighbour),
+                )
+
+                if time < min_time:
+                    min_neighbour = copy.deepcopy(other)
+                    min_time = time
+
+        if min_neighbour in to_ignore:
+            return None, None
+
+        return min_neighbour, min_time
+
+    def get_soonest_neighbour(
+        self, customer: Customer, to_ignore: Iterable[Customer] = tuple()
+    ):
+        return self.get_soonest_neighbour_with_time(
             customer=customer, to_ignore=to_ignore
         )[0]
 

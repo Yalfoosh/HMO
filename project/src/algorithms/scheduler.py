@@ -32,16 +32,13 @@ class Scheduler:
 
         return n_vehicles, vehicle_capacity
 
-    def __init__(
-        self, n_vehicles: int, vehicle_capacity: int, customers: Iterable[Customer]
-    ):
+    def __init__(self, n_vehicles: int, vehicle_capacity: int):
         n_vehicles, vehicle_capacity = self._check_init_args(
             n_vehicles=n_vehicles, vehicle_capacity=vehicle_capacity
         )
 
         self._n_vehicles = n_vehicles
         self._vehicle_capacity = vehicle_capacity
-        self._customer_graph = CustomerGraph(customers=customers)
 
     # region Properties
     @property
@@ -52,8 +49,10 @@ class Scheduler:
     def vehicle_capacity(self) -> int:
         return self._vehicle_capacity
 
-    @property
-    def customer_graph(self) -> CustomerGraph:
-        return self._customer_graph
-
     # endregion
+
+    def __repr__(self):
+        return f"Scheduler(n={self.n_vehicles},c={self.vehicle_capacity})"
+
+    def __str__(self):
+        return repr(self)
